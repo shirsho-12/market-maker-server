@@ -25,8 +25,7 @@ def create_user(name):  # noqa: E501
         id = "2"
     elif name == "user3":
         id = "3"
-    user = User(id, name)
-    backend_object.add_user(id)
+    backend_object.add_user(id, name)
     return id
 
 
@@ -43,7 +42,11 @@ def get_user(user_id):  # noqa: E501
     user = backend_object.get_user(user_id)
     if user is None:
         return "User not found", 404
-    return user
+    return {
+        "name": user.user_name,
+        "id": user.user_id,
+        "score": user.position
+    }
 
 
 def update_user(user_id, score):  # noqa: E501
@@ -61,6 +64,6 @@ def update_user(user_id, score):  # noqa: E501
     user = backend_object.get_user(user_id)
     if user is None:
         return "User not found", 404
-    user.score = score
+    user.position = score
     backend_object.update_user(user)
     return "200"

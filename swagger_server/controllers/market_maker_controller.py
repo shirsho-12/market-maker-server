@@ -17,7 +17,7 @@ def get_order_book():  # noqa: E501
 
     :rtype: List[Order]
     """
-    return backend.get_orderbook()
+    return str(backend.get_orderbook())
 
 
 def place_order(body, user_id):  # noqa: E501

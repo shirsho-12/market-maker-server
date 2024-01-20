@@ -4,18 +4,45 @@ from swagger_server.ob.common.ptreeIterator import ComplexIterator
 import logging
 
 log = logging.getLogger(__name__)
+"""
+Things to note for the people who will be working on this:
 
+BackEnd() is basically 1 instance of the game
+User() is a user in the game
+
+Do BackEnd.add_user(user) to add a user to the game
+Do BackEnd.add_order(user, type, price, quantity) to add an order to the game
+
+When the orders are added, the orderbook is updated and the trades are made. 
+
+When a trade gets made (say user 1 buys from user 2):
+    user_1.add_buy function gets called. You can modify this for UI purposes.
+    user_2.add_Sell ...
+
+Use BackEnd.pull_()_orders functions to pull orders of a user
+
+Use BackEnd.get_orderbook() to get the orderbook. Put user = None for a general orderbook and set a user for a specific one.
+
+Use User.pnl(final_val, binary) to get the pnl of a user. binary = True if you want to get the pnl in binary form (1 if profit, -1 if loss, 0 if no pnl)
+"""
 
 class User:
-    def __init__(self, user_id):
+    id_to_user = dict([])
+
+    def __init__(self, user_id, user_name=None):
         self.user_id = user_id
+        self.user_name = user_name
         self.position = 0
         self.buys = []
         self.sells = []
         self.buy_orders = []
         self.sell_orders = []
+        self.dq = False
+        User.id_to_user[user_id] = self
 
     def pnl(self, final_val, binary=False):
+        if self.dq:
+            return -float("inf")
         if binary:
             sign = lambda x: x // abs(x) if x != 0 else 0
             return sum([i[1] * sign(final_val - i[0]) for i in self.buys]) + sum(
@@ -53,14 +80,20 @@ class User:
                 if i.price == asks[j][0]:
                     asks[j][2] += i.size
                     break
+    
+    def check_limits(self, limit):
+        if abs(self.position) > limit:
+            self.dq = True
 
 
 class BackEnd:
-    def __init__(self):
+    def __init__(self, end_limit = float('inf'), intra_session_limit = float('inf')):
         self.users = []
         self.orderbook = OrderBook()
         self.tot_orders = 0
         self.order_to_user = dict([])
+        self.end_limit = end_limit
+        self.intra_session_limit = intra_session_limit
 
     def get_user(self, id):
         for user in self.users:
@@ -76,8 +109,8 @@ class BackEnd:
                 return True
         return False
 
-    def add_user(self, user):
-        self.users.append(User(user_id=user))
+    def add_user(self, id, name=None):
+        self.users.append(User(user_id=id, user_name=name))
 
     def add_order(self, user_id, type, price, quantity):
         user = self.get_user(user_id)
@@ -95,11 +128,13 @@ class BackEnd:
             user.sell_orders.append(order)
         trades = self.orderbook.process_order(order)
         for i in trades:
-            bid_order_id, ask_order_id, trade_price, trade_quantity = map(
-                int, i.split(",")
-            )
-            self.order_to_user[bid_order_id].add_buy(trade_price, trade_quantity)
-            self.order_to_user[ask_order_id].add_sell(trade_price, trade_quantity)
+            bid_order_id, ask_order_id, trade_price, trade_quantity = map(int, i.split(','))
+            buy_user = self.order_to_user[bid_order_id]
+            buy_user.add_buy(trade_price, trade_quantity)
+            buy_user.check_limits(self.intra_session_limit)
+            sell_user = self.order_to_user[ask_order_id]
+            sell_user.add_sell(trade_price, trade_quantity)
+            sell_user.check_limits(self.intra_session_limit)
 
     def pull_buy_orders(self, user):
         for order in user.buy_orders:
@@ -150,3 +185,8 @@ class BackEnd:
             return bids, asks
         else:
             return user.get_orderbook(bids, asks)
+
+    def leaderboard(self, final_val):
+        for user in self.users:
+            user.check_limits(self.end_limit)
+        return sorted([(user.user_id, user.pnl(final_val)) for user in self.users], lambda x: x[1], reverse = True)
