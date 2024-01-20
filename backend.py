@@ -2,6 +2,29 @@ from ob.orderBook import OrderBook
 from ob.common.order import Order
 from ob.common.ptreeIterator import ComplexIterator
 
+"""
+Things to note for the people who will be working on this:
+
+BackEnd() is basically 1 instance of the game
+User() is a user in the game
+
+Do BackEnd.add_user(user) to add a user to the game
+Do BackEnd.add_order(user, type, price, quantity) to add an order to the game
+
+When the orders are added, the orderbook is updated and the trades are made. 
+
+When a trade gets made (say user 1 buys from user 2):
+    user_1.add_buy function gets called. You can modify this for UI purposes.
+    user_2.add_Sell ...
+
+Use BackEnd.pull_()_orders functions to pull orders of a user
+
+Use BackEnd.get_orderbook() to get the orderbook. Put user = None for a general orderbook and set a user for a specific one.
+
+Use User.pnl(final_val, binary) to get the pnl of a user. binary = True if you want to get the pnl in binary form (1 if profit, -1 if loss, 0 if no pnl)
+"""
+
+
 class User():
     def __init__(self, user_id):
         self.user_id = user_id
@@ -20,11 +43,12 @@ class User():
     def add_buy(self, price, quantity):
         self.buys.append([price, quantity])
         self.position += quantity
-
+        # Can do some self.notify shit here
 
     def add_sell(self, price, quantity):
         self.sells.append([price, quantity])
         self.position -= quantity
+        # Can do some self.notify shit here
 
     def get_orderbook(self, bids, asks):
         bids = [[i[0], i[1], 0] for i in bids]
@@ -64,10 +88,8 @@ class BackEnd:
         else:
             user.sell_orders.append(order)
         trades = self.orderbook.process_order(order)
-        print(trades)
         for i in trades:
             bid_order_id, ask_order_id, trade_price, trade_quantity = map(int, i.split(','))
-            print(bid_order_id, ask_order_id, trade_price, trade_quantity)
             self.order_to_user[bid_order_id].add_buy(trade_price, trade_quantity)
             self.order_to_user[ask_order_id].add_sell(trade_price, trade_quantity)
 
@@ -88,6 +110,14 @@ class BackEnd:
         self.pull_sell_orders(user)
 
     def get_orderbook(self, one_side_cap = 10, user = None):
+        """
+        Gets the orderbook in this form:
+        Bids and Asks separately.
+        For each bid/ask, we have a list where each element is of the form:
+            [price, size] if user is None
+            [price, size, order_size] if user is not None
+        Both bid and ask lists are capped at one_side_cap
+        """
         bids_it = ComplexIterator(self.orderbook.bids.tree.values(reverse=True))
         asks_it = ComplexIterator(self.orderbook.asks.tree.values())
         bids = []
