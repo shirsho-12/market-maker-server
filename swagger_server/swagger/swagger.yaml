@@ -1,0 +1,142 @@
+---
+swagger: "2.0"
+info:
+  description: "<h2>Server Code for HacknRoll 2024 Market-Maker</h2>"
+  version: "1.0"
+  title: "Market-Maker REST API"
+paths:
+  /users/{userId}/orders:
+    post:
+      tags:
+      - "Market Maker"
+      summary: "Place an order"
+      description: "Place an order in the market"
+      operationId: "place_order"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "User ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "order"
+        description: "Order Information"
+        required: true
+        schema:
+          $ref: "#/definitions/Order"
+      responses:
+        "200":
+          description: "OK"
+        "400":
+          description: "Bad Request"
+        "500":
+          description: "Internal Server Error"
+      x-swagger-router-controller: "swagger_server.controllers.market_maker_controller"
+  /user:
+    post:
+      tags:
+      - "User"
+      summary: "Create a new user"
+      description: "Create a new user"
+      operationId: "create_user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "query"
+        description: "User name"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "OK"
+        "400":
+          description: "Bad Request"
+        "500":
+          description: "Internal Server Error"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
+  /users/{userId}:
+    get:
+      tags:
+      - "User"
+      summary: "Get user information"
+      description: "Get user information"
+      operationId: "get_user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "User ID"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Bad Request"
+        "500":
+          description: "Internal Server Error"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
+  /users/{userId}/update:
+    put:
+      tags:
+      - "User"
+      summary: "Update user score"
+      description: "Update user score"
+      operationId: "update_user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "User ID"
+        required: true
+        type: "string"
+      - name: "score"
+        in: "query"
+        description: "User score"
+        required: true
+        type: "number"
+      responses:
+        "200":
+          description: "OK"
+        "400":
+          description: "Bad Request"
+        "500":
+          description: "Internal Server Error"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
+definitions:
+  User:
+    properties:
+      name:
+        type: "string"
+        description: "User name"
+      id:
+        type: "string"
+        description: "User ID"
+      score:
+        type: "number"
+        description: "User balance"
+    example:
+      score: 0.80082819046101150206595775671303272247314453125
+      name: "name"
+      id: "id"
+  Order:
+    properties:
+      type:
+        type: "string"
+        description: "Order type (buy or sell)"
+        enum:
+        - "buy"
+        - "sell"
+      quantity:
+        type: "integer"
+        description: "Order quantity"
+      price:
+        type: "number"
+        description: "Order price"
