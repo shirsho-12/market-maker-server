@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   title: Market-Maker REST API
   description: <h2>Server Code for HacknRoll 2024 Market-Maker</h2>
