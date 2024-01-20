@@ -279,6 +279,31 @@ paths:
           content: {}
       x-swagger-router-controller: swagger_server.controllers.market_maker_controller
       x-openapi-router-controller: swagger_server.controllers.market_maker_controller
+  /players:
+    get:
+      tags:
+      - Market Maker
+      summary: Get players
+      description: Get players
+      operationId: get_all_users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+                x-content-type: application/json
+        "400":
+          description: Bad Request
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+      x-swagger-router-controller: swagger_server.controllers.market_maker_controller
+      x-openapi-router-controller: swagger_server.controllers.market_maker_controller
 components:
   schemas:
     User:

@@ -202,3 +202,9 @@ class BackEnd:
         for user in self.users:
             user.check_limits(self.end_limit)
         return sorted([(user.user_id, user.pnl(final_val)) for user in self.users], lambda x: x[1], reverse = True)
+
+    def get_all_users(self):
+        name = []
+        for user in self.users:
+            name.append(user.user_name)
+        return name
