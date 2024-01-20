@@ -11,7 +11,10 @@ class User():
         self.buy_orders = []
         self.sell_orders = []
     
-    def pnl(self, final_val):
+    def pnl(self, final_val, binary = False):
+        if binary:
+            sign = lambda x: x//abs(x) if x != 0 else 0
+            return sum([i[1] * sign(final_val - i[0]) for i in self.buys]) + sum([i[1] * sign(i[0] - final_val) for i in self.sells])
         return final_val * self.position - sum([i[0] * i[1] for i in self.buys]) + sum([i[0] * i[1] for i in self.sells])
     
     def add_buy(self, price, quantity):
@@ -126,5 +129,5 @@ b.add_order(u2, 'S', 45, 3)
 print(u1.buys)
 # b.add_order(u2, 'S', 45, 3)
 
-print(u2.pnl(52))
+print(u2.pnl(53, binary = True))
 print(b.get_orderbook())
