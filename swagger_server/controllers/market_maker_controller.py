@@ -19,6 +19,34 @@ def get_order_book():  # noqa: E501
     """
     return str(backend.get_orderbook())
 
+def get_order_book_by_user_id(user_id):  # noqa: E501
+    """Get top 10 unfulfilled buy and sell orders by user id
+
+    Get order book by user id # noqa: E501
+
+    :param user_id: User ID
+    :type user_id: str
+
+    :rtype: List[Order]
+    """
+
+    return str(backend.get_orderbook(10, user_id))
+
+def get_user_pnl(user_id):  # noqa: E501
+    """Get user pnl
+
+    Get user pnl # noqa: E501
+
+    :param user_id: User ID
+    :type user_id: str
+
+    :rtype: float
+    """
+    user = backend.get_user(user_id)
+    if user is None:
+        return "User not found", 404
+    return backend.user_expected_pnl(user)
+
 
 def place_order(body, user_id):  # noqa: E501
     """Place an order
@@ -46,3 +74,13 @@ def place_order(body, user_id):  # noqa: E501
         print(e, file=sys.stdout)
         return str(e), 400
     return '200'
+
+def get_results():  # noqa: E501
+    """Get results
+
+    Get results # noqa: E501
+
+
+    :rtype: str
+    """
+    return backend.leaderboard( 10)

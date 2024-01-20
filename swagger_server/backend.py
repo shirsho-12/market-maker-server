@@ -48,6 +48,10 @@ class User:
             return sum([i[1] * sign(final_val - i[0]) for i in self.buys]) + sum(
                 [i[1] * sign(i[0] - final_val) for i in self.sells]
             )
+        print(final_val)
+        print(final_val * self.position
+            - sum([i[0] * i[1] for i in self.buys])
+            + sum([i[0] * i[1] for i in self.sells]))
         return (
             final_val * self.position
             - sum([i[0] * i[1] for i in self.buys])
@@ -68,6 +72,9 @@ class User:
         bids = [[i[0], i[1], 0] for i in bids]
         asks = [[i[0], i[1], 0] for i in asks]
 
+        print(bids)
+        print(asks)
+
         # Lower part of the code can be easily optimised with binary search but too lazy right now
         for i in self.buy_orders:
             for j in range(len(bids)):
@@ -80,6 +87,7 @@ class User:
                 if i.price == asks[j][0]:
                     asks[j][2] += i.size
                     break
+        return bids, asks
     
     def check_limits(self, limit):
         if abs(self.position) > limit:
@@ -98,7 +106,6 @@ class BackEnd:
 
     def get_user(self, id):
         for user in self.users:
-            print(user.__dict__)
             if user.user_id == id:
                 return user
         return None
@@ -182,7 +189,7 @@ class BackEnd:
                 if len(asks) == one_side_cap:
                     break
                 asks.append([ask.price, ask.peak_size])
-
+        
         if user_id == None:
             return bids, asks
         else:
