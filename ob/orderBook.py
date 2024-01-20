@@ -29,7 +29,7 @@ class OrderBook(object):
         curr_order.trade_size = 0
         # And then the LOB state
         self.print_book()
-        return printed_trades
+        return [i for i in printed_trades if i != None]
 
     def print_book(self):
         print("+-----------------------------------------------------------------+")

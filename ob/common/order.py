@@ -87,7 +87,7 @@ class Order(object):
             self.trade_size = 0  
             return s
         return None
-
+    
     def to_print(self):
         if self.is_bid:
             sys.stdout.write("{:>10}|{:>13}|{:>7}".format(     # custom line spacing
