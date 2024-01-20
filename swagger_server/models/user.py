@@ -16,7 +16,7 @@ class User(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: str=None, id: str=None, score: float=None, buy_orders: List[Order]=None, sell_orders: List[Order]=None, buys: List[Trade]=None, sells: List[Trade]=None):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, score: float=None, buy_orders: List[Order]=None, sell_orders: List[Order]=None, buys: List[Trade]=None, sells: List[Trade]=None):  # noqa: E501
         """User - a model defined in Swagger
 
         :param name: The name of this User.  # noqa: E501
@@ -236,3 +236,36 @@ class User(Model):
         """
 
         self._sells = sells
+    
+    def pnl(self, final_val, binary = False):
+        if binary:
+            sign = lambda x: x//abs(x) if x != 0 else 0
+            return sum([i[1] * sign(final_val - i[0]) for i in self._buys]) + sum([i[1] * sign(i[0] - final_val) for i in self._sells])
+        return final_val * self._score - sum([i[0] * i[1] for i in self._buys]) + sum([i[0] * i[1] for i in self._sells])
+    
+    def add_buy(self, price, quantity):
+        self._buys.append([price, quantity])
+        self._score += quantity
+
+
+    def add_sell(self, price, quantity):
+        self._sells.append([price, quantity])
+        self._score -= quantity
+
+    def get_orderbook(self, bids, asks):
+        bids = [[i[0], i[1], 0] for i in bids]
+        asks = [[i[0], i[1], 0] for i in asks]
+
+        # Lower part of the code can be easily optimised with binary search but too lazy right now
+        for i in self._buy_orders:
+            for j in range(len(bids)):
+                if i.price == bids[j][0]:
+                    bids[j][2] += i.size
+                    break
+
+        for i in self._sell_orders:
+            for j in range(len(asks)):
+                if i.price == asks[j][0]:
+                    asks[j][2] += i.size
+                    break
+

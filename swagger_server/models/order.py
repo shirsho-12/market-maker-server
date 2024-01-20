@@ -14,7 +14,7 @@ class Order(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, order_id: str=None, type: str=None, quantity: int=None, price: float=None):  # noqa: E501
+    def __init__(self, order_id: str=None, type: str=None, quantity: int=None, price: float=None) :  # noqa: E501
         """Order - a model defined in Swagger
 
         :param order_id: The order_id of this Order.  # noqa: E501

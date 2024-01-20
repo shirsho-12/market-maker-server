@@ -1,9 +1,11 @@
 import connexion
 import six
+import uuid
 
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server import util
-
+from swagger_server import backend_object
+from random import randint
 
 def create_user(name):  # noqa: E501
     """Create a new user
@@ -15,7 +17,11 @@ def create_user(name):  # noqa: E501
 
     :rtype: None
     """
-    return 'do some magic!'
+    id = str(randint(0, 20))
+    user = User(id, name)
+    backend_object.add_user(user)
+    return id
+    
 
 
 def get_user(user_id):  # noqa: E501
@@ -28,7 +34,10 @@ def get_user(user_id):  # noqa: E501
 
     :rtype: User
     """
-    return 'do some magic!'
+    user = backend_object.get_user(user_id)
+    if user is None:
+        return 'User not found', 404
+    return user
 
 
 def update_user(user_id, score):  # noqa: E501
@@ -43,4 +52,9 @@ def update_user(user_id, score):  # noqa: E501
 
     :rtype: None
     """
-    return 'do some magic!'
+    user = backend_object.get_user(user_id)
+    if user is None:
+        return 'User not found', 404
+    user.score = score
+    backend_object.update_user(user)
+    return '200'

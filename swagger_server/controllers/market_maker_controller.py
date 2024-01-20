@@ -4,6 +4,9 @@ import six
 from swagger_server.models.order import Order  # noqa: E501
 from swagger_server import util
 
+# get backend object
+from swagger_server import backend_object as backend
+
 
 def get_order_book():  # noqa: E501
     """Get top 10 unfulfilled buy and sell orders
@@ -13,7 +16,7 @@ def get_order_book():  # noqa: E501
 
     :rtype: List[Order]
     """
-    return 'do some magic!'
+    return backend.get_orderbook()
 
 
 def place_order(body, user_id):  # noqa: E501
@@ -30,4 +33,12 @@ def place_order(body, user_id):  # noqa: E501
     """
     if connexion.request.is_json:
         body = Order.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    user = body.user_id
+    type = body.type
+    price = body.price
+    quantity = body.quantity
+    try:
+        backend.add_order(user, type, price, quantity)
+    except Exception as e:
+        return str(e), 400
+    return '200'
