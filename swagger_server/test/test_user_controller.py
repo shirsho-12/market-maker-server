@@ -31,7 +31,7 @@ class TestUserController(BaseTestCase):
         Get user information
         """
         response = self.client.open(
-            '/users/{userId}'.format(userId='userId_example'),
+            '/users/{userId}'.format(user_id='user_id_example'),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -41,9 +41,9 @@ class TestUserController(BaseTestCase):
 
         Update user score
         """
-        query_string = [('score', 8.14)]
+        query_string = [('score', 1.2)]
         response = self.client.open(
-            '/users/{userId}/update'.format(userId='userId_example'),
+            '/users/{userId}/update'.format(user_id='user_id_example'),
             method='PUT',
             query_string=query_string)
         self.assert200(response,

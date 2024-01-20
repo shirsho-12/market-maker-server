@@ -18,28 +18,28 @@ def create_user(name):  # noqa: E501
     return 'do some magic!'
 
 
-def get_user(userId):  # noqa: E501
+def get_user(user_id):  # noqa: E501
     """Get user information
 
     Get user information # noqa: E501
 
-    :param userId: User ID
-    :type userId: str
+    :param user_id: User ID
+    :type user_id: str
 
     :rtype: User
     """
     return 'do some magic!'
 
 
-def update_user(userId, score):  # noqa: E501
+def update_user(user_id, score):  # noqa: E501
     """Update user score
 
     Update user score # noqa: E501
 
-    :param userId: User ID
-    :type userId: str
+    :param user_id: User ID
+    :type user_id: str
     :param score: User score
-    :type score: 
+    :type score: float
 
     :rtype: None
     """

@@ -6,6 +6,8 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.order import Order  # noqa: F401,E501
+from swagger_server.models.trade import Trade  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,8 +16,7 @@ class User(Model):
 
     Do not edit the class manually.
     """
-
-    def __init__(self, name: str=None, id: str=None, score: float=None):  # noqa: E501
+    def __init__(self, name: str=None, id: str=None, score: float=None, buy_orders: List[Order]=None, sell_orders: List[Order]=None, buys: List[Trade]=None, sells: List[Trade]=None):  # noqa: E501
         """User - a model defined in Swagger
 
         :param name: The name of this User.  # noqa: E501
@@ -24,22 +25,41 @@ class User(Model):
         :type id: str
         :param score: The score of this User.  # noqa: E501
         :type score: float
+        :param buy_orders: The buy_orders of this User.  # noqa: E501
+        :type buy_orders: List[Order]
+        :param sell_orders: The sell_orders of this User.  # noqa: E501
+        :type sell_orders: List[Order]
+        :param buys: The buys of this User.  # noqa: E501
+        :type buys: List[Trade]
+        :param sells: The sells of this User.  # noqa: E501
+        :type sells: List[Trade]
         """
         self.swagger_types = {
             'name': str,
             'id': str,
-            'score': float
+            'score': float,
+            'buy_orders': List[Order],
+            'sell_orders': List[Order],
+            'buys': List[Trade],
+            'sells': List[Trade]
         }
 
         self.attribute_map = {
             'name': 'name',
             'id': 'id',
-            'score': 'score'
+            'score': 'score',
+            'buy_orders': 'buy_orders',
+            'sell_orders': 'sell_orders',
+            'buys': 'buys',
+            'sells': 'sells'
         }
-
         self._name = name
         self._id = id
         self._score = score
+        self._buy_orders = buy_orders
+        self._sell_orders = sell_orders
+        self._buys = buys
+        self._sells = sells
 
     @classmethod
     def from_dict(cls, dikt) -> 'User':
@@ -72,6 +92,8 @@ class User(Model):
         :param name: The name of this User.
         :type name: str
         """
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
         self._name = name
 
@@ -95,6 +117,8 @@ class User(Model):
         :param id: The id of this User.
         :type id: str
         """
+        if id is None:
+            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
 
         self._id = id
 
@@ -120,3 +144,95 @@ class User(Model):
         """
 
         self._score = score
+
+    @property
+    def buy_orders(self) -> List[Order]:
+        """Gets the buy_orders of this User.
+
+        User buy orders  # noqa: E501
+
+        :return: The buy_orders of this User.
+        :rtype: List[Order]
+        """
+        return self._buy_orders
+
+    @buy_orders.setter
+    def buy_orders(self, buy_orders: List[Order]):
+        """Sets the buy_orders of this User.
+
+        User buy orders  # noqa: E501
+
+        :param buy_orders: The buy_orders of this User.
+        :type buy_orders: List[Order]
+        """
+
+        self._buy_orders = buy_orders
+
+    @property
+    def sell_orders(self) -> List[Order]:
+        """Gets the sell_orders of this User.
+
+        User sell orders  # noqa: E501
+
+        :return: The sell_orders of this User.
+        :rtype: List[Order]
+        """
+        return self._sell_orders
+
+    @sell_orders.setter
+    def sell_orders(self, sell_orders: List[Order]):
+        """Sets the sell_orders of this User.
+
+        User sell orders  # noqa: E501
+
+        :param sell_orders: The sell_orders of this User.
+        :type sell_orders: List[Order]
+        """
+
+        self._sell_orders = sell_orders
+
+    @property
+    def buys(self) -> List[Trade]:
+        """Gets the buys of this User.
+
+        User buy transactions  # noqa: E501
+
+        :return: The buys of this User.
+        :rtype: List[Trade]
+        """
+        return self._buys
+
+    @buys.setter
+    def buys(self, buys: List[Trade]):
+        """Sets the buys of this User.
+
+        User buy transactions  # noqa: E501
+
+        :param buys: The buys of this User.
+        :type buys: List[Trade]
+        """
+
+        self._buys = buys
+
+    @property
+    def sells(self) -> List[Trade]:
+        """Gets the sells of this User.
+
+        User sell transactions  # noqa: E501
+
+        :return: The sells of this User.
+        :rtype: List[Trade]
+        """
+        return self._sells
+
+    @sells.setter
+    def sells(self, sells: List[Trade]):
+        """Sets the sells of this User.
+
+        User sell transactions  # noqa: E501
+
+        :param sells: The sells of this User.
+        :type sells: List[Trade]
+        """
+
+        self._sells = sells

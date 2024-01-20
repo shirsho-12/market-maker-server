@@ -14,10 +14,11 @@ class Order(Model):
 
     Do not edit the class manually.
     """
-
-    def __init__(self, type: str=None, quantity: int=None, price: float=None):  # noqa: E501
+    def __init__(self, order_id: str=None, type: str=None, quantity: int=None, price: float=None):  # noqa: E501
         """Order - a model defined in Swagger
 
+        :param order_id: The order_id of this Order.  # noqa: E501
+        :type order_id: str
         :param type: The type of this Order.  # noqa: E501
         :type type: str
         :param quantity: The quantity of this Order.  # noqa: E501
@@ -26,17 +27,19 @@ class Order(Model):
         :type price: float
         """
         self.swagger_types = {
+            'order_id': str,
             'type': str,
             'quantity': int,
             'price': float
         }
 
         self.attribute_map = {
+            'order_id': 'order_id',
             'type': 'type',
             'quantity': 'quantity',
             'price': 'price'
         }
-
+        self._order_id = order_id
         self._type = type
         self._quantity = quantity
         self._price = price
@@ -51,6 +54,29 @@ class Order(Model):
         :rtype: Order
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def order_id(self) -> str:
+        """Gets the order_id of this Order.
+
+        Order ID  # noqa: E501
+
+        :return: The order_id of this Order.
+        :rtype: str
+        """
+        return self._order_id
+
+    @order_id.setter
+    def order_id(self, order_id: str):
+        """Sets the order_id of this Order.
+
+        Order ID  # noqa: E501
+
+        :param order_id: The order_id of this Order.
+        :type order_id: str
+        """
+
+        self._order_id = order_id
 
     @property
     def type(self) -> str:
@@ -72,7 +98,7 @@ class Order(Model):
         :param type: The type of this Order.
         :type type: str
         """
-        allowed_values = ["buy", "sell"]  # noqa: E501
+        allowed_values = ["B", "S"]  # noqa: E501
         if type not in allowed_values:
             raise ValueError(
                 "Invalid value for `type` ({0}), must be one of {1}"

@@ -12,17 +12,28 @@ from swagger_server.test import BaseTestCase
 class TestMarketMakerController(BaseTestCase):
     """MarketMakerController integration test stubs"""
 
+    def test_get_order_book(self):
+        """Test case for get_order_book
+
+        Get top 10 unfulfilled buy and sell orders
+        """
+        response = self.client.open(
+            '/orderbook',
+            method='GET')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
     def test_place_order(self):
         """Test case for place_order
 
         Place an order
         """
-        order = Order()
+        body = Order()
         response = self.client.open(
-            '/users/{userId}/orders'.format(userId='userId_example'),
+            '/users/{userId}/orders'.format(user_id='user_id_example'),
             method='POST',
-            data=json.dumps(order),
-            content_type='application/json')
+            data=json.dumps(body),
+            content_type='*/*')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
