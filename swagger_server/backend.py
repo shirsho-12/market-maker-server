@@ -94,6 +94,7 @@ class BackEnd:
         self.order_to_user = dict([])
         self.end_limit = end_limit
         self.intra_session_limit = intra_session_limit
+        self.last_traded_price = 0
 
     def get_user(self, id):
         for user in self.users:
@@ -135,6 +136,7 @@ class BackEnd:
             sell_user = self.order_to_user[ask_order_id]
             sell_user.add_sell(trade_price, trade_quantity)
             sell_user.check_limits(self.intra_session_limit)
+            self.last_traded_price = trade_price
 
     def pull_buy_orders(self, user):
         for order in user.buy_orders:
@@ -151,13 +153,13 @@ class BackEnd:
         self.pull_buy_orders(user)
         self.pull_sell_orders(user)
 
-    def get_orderbook(self, one_side_cap=10, user=None):
+    def get_orderbook(self, one_side_cap=10, user_id=None):
         """
         Gets the orderbook in this form:
         Bids and Asks separately.
         For each bid/ask, we have a list where each element is of the form:
             [price, size] if user is None
-            [price, size, order_size] if user is not None
+            [price, size, user_size] if user is not None
         Both bid and ask lists are capped at one_side_cap
         """
         bids_it = ComplexIterator(self.orderbook.bids.tree.values(reverse=True))
@@ -181,10 +183,13 @@ class BackEnd:
                     break
                 asks.append([ask.price, ask.peak_size])
 
-        if user == None:
+        if user_id == None:
             return bids, asks
         else:
-            return user.get_orderbook(bids, asks)
+            return self.get_user(user_id).get_orderbook(bids, asks)
+    
+    def user_expected_pnl(self, user):
+        return user.pnl(self.last_traded_price)
 
     def leaderboard(self, final_val):
         for user in self.users:

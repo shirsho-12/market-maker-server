@@ -252,7 +252,7 @@ components:
           type: number
           description: Order price
       example:
-        order_id: f1d8c9e0-4f6e-4b1e-8f1a-5c9b1b9b1b9b
+        order_id: ""
         type: B
         quantity: 3
         price: 10

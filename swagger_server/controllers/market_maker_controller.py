@@ -34,14 +34,15 @@ def place_order(body, user_id):  # noqa: E501
     """
     print("place order", file=sys.stdout)
     if connexion.request.is_json:
-        body = Order.from_dict(connexion.request.get_json())  # noqa: E501
+        body = connexion.request.get_json()  # noqa: E501
     print(body, file=sys.stdout)
     user = user_id
     type = body["type"]
-    price = body["price"]
-    quantity = body["quantity"]
+    price = int(body["price"])
+    quantity = int(body["quantity"])
     try:
         backend.add_order(user, type, price, quantity)
     except Exception as e:
+        print(e, file=sys.stdout)
         return str(e), 400
     return '200'
