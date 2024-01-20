@@ -86,6 +86,7 @@ class BackEnd:
         self.order_to_user = dict([])
         self.end_limit = end_limit
         self.intra_session_limit = intra_session_limit
+        self.last_traded_price = 0
 
     def add_user(self, user):
         self.users.append(user)
@@ -108,6 +109,7 @@ class BackEnd:
             sell_user = self.order_to_user[ask_order_id]
             sell_user.add_sell(trade_price, trade_quantity)
             sell_user.check_limits(self.intra_session_limit)
+            self.last_traded_price = trade_price
 
     def pull_buy_orders(self, user):
         for order in user.buy_orders:
@@ -158,6 +160,9 @@ class BackEnd:
             return bids, asks
         else:
             return user.get_orderbook(bids, asks)
+        
+    def user_expected_pnl(self, user):
+        return user.pnl(self.last_traded_price)
         
     def leaderboard(self, final_val):
         for user in self.users:
