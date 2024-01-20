@@ -33,8 +33,11 @@ class User():
         self.sells = []     
         self.buy_orders = []
         self.sell_orders = []
+        self.dq = False
     
     def pnl(self, final_val, binary = False):
+        if self.dq:
+            return -float('inf')
         if binary:
             sign = lambda x: x//abs(x) if x != 0 else 0
             return sum([i[1] * sign(final_val - i[0]) for i in self.buys]) + sum([i[1] * sign(i[0] - final_val) for i in self.sells])
@@ -66,14 +69,20 @@ class User():
                 if i.price == asks[j][0]:
                     asks[j][2] += i.size
                     break
+
+    def check_limits(self, limit):
+        if abs(self.position) > limit:
+            self.dq = True
     
 
 class BackEnd:
-    def __init__(self):
+    def __init__(self, end_limit = float('inf'), intra_session_limit = float('inf')):
         self.users = []
         self.orderbook = OrderBook()
         self.tot_orders = 0
         self.order_to_user = dict([])
+        self.end_limit = end_limit
+        self.intra_session_limit = intra_session_limit
 
     def add_user(self, user):
         self.users.append(user)
@@ -90,9 +99,12 @@ class BackEnd:
         trades = self.orderbook.process_order(order)
         for i in trades:
             bid_order_id, ask_order_id, trade_price, trade_quantity = map(int, i.split(','))
-            self.order_to_user[bid_order_id].add_buy(trade_price, trade_quantity)
-            self.order_to_user[ask_order_id].add_sell(trade_price, trade_quantity)
-
+            buy_user = self.order_to_user[bid_order_id]
+            buy_user.add_buy(trade_price, trade_quantity)
+            buy_user.check_limits(self.intra_session_limit)
+            sell_user = self.order_to_user[ask_order_id]
+            sell_user.add_sell(trade_price, trade_quantity)
+            sell_user.check_limits(self.intra_session_limit)
 
     def pull_buy_orders(self, user):
         for order in user.buy_orders:
@@ -143,6 +155,12 @@ class BackEnd:
             return bids, asks
         else:
             return user.get_orderbook(bids, asks)
+        
+    def leaderboard(self, final_val):
+        for user in self.users:
+            user.check_limits(self.end_limit)
+        return sorted([(user.user_id, user.pnl(final_val)) for user in self.users], lambda x: x[1], reverse = True)
+
 
 u1 = User(1)
 u2 = User(2)
