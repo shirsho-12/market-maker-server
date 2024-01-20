@@ -25,7 +25,9 @@ Use User.pnl(final_val, binary) to get the pnl of a user. binary = True if you w
 """
 
 
-class User():
+class User:
+    id_to_user = dict([])
+
     def __init__(self, user_id):
         self.user_id = user_id
         self.position = 0
@@ -34,6 +36,7 @@ class User():
         self.buy_orders = []
         self.sell_orders = []
         self.dq = False
+        User.id_to_user[user_id] = self
     
     def pnl(self, final_val, binary = False):
         if self.dq:
