@@ -42,6 +42,32 @@ paths:
       x-swagger-router-controller: swagger_server.controllers.market_maker_controller
       x-codegen-request-body-name: order
       x-openapi-router-controller: swagger_server.controllers.market_maker_controller
+      x-amazon-apigateway-cors:
+        allowOrigins:
+          - '*'
+        allowMethods:
+          - POST
+        allowHeaders:
+          - Content-Type
+          - X-Amz-Date
+        exposeHeaders:
+          - 'X-Amz-Date'
+          - 'X-Amz-Security-Token'
+          - 'X-Amz-User-Agent'
+        
+      responses:
+        "200":
+          description: OK
+          content: {}
+        "400":
+          description: Bad Request
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+      x-swagger-router-controller: swagger_server.controllers.market_maker_controller
+      x-codegen-request-body-name: order
+      x-openapi-router-controller: swagger_server.controllers.market_maker_controller
   /user:
     post:
       tags:

@@ -6,6 +6,7 @@ from swagger_server import util
 
 # get backend object
 from swagger_server import backend_object as backend
+import logging
 
 
 def get_order_book():  # noqa: E501
@@ -31,8 +32,10 @@ def place_order(body, user_id):  # noqa: E501
 
     :rtype: None
     """
+    print("place order", file=sys.stdout)
     if connexion.request.is_json:
         body = Order.from_dict(connexion.request.get_json())  # noqa: E501
+    print(body, file=sys.stdout)
     user = body.user_id
     type = body.type
     price = body.price

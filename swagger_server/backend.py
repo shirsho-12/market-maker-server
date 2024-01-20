@@ -1,7 +1,9 @@
 from swagger_server.ob.orderBook import OrderBook
 from swagger_server.ob.common.order import Order
 from swagger_server.ob.common.ptreeIterator import ComplexIterator
+import logging
 
+log = logging.getLogger(__name__)
 
 class User():
     def __init__(self, user_id):
@@ -67,9 +69,13 @@ class BackEnd:
 
     def add_user(self, user):
         self.users.append(user)
-        
+
     
     def add_order(self, user, type, price, quantity):
+        log.info("Adding order for user %s", user)
+        log.info("Order type: %s", type)
+        log.info("Order price: %s", price)
+        log.info("Order quantity: %s", quantity)
         order_id = self.tot_orders
         self.order_to_user[order_id] = user
         self.tot_orders += 1

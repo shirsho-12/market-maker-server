@@ -3,12 +3,19 @@
 import connexion
 
 from swagger_server import encoder
+from flask_cors import CORS
+
 
 def main():
+    
     app = connexion.App(__name__, specification_dir='./swagger/')
     app.app.json_encoder = encoder.JSONEncoder
+    CORS(app.app)
     app.add_api('swagger.yaml', arguments={'title': 'Market-Maker REST API'}, pythonic_params=True)
-    app.run(port=8080, debug=True)
+    # app.app.config['CORS_HEADERS'] = 'Content-Type'
+
+    app.run(port=8080, debug=True,)
+    print(f"Debug URL: {app.app.url_map}")
     # create globally available Backend object
     
     # u1 = User(1)
