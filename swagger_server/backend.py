@@ -95,7 +95,7 @@ class User:
 
 
 class BackEnd:
-    def __init__(self, end_limit = float('inf'), intra_session_limit = float('inf')):
+    def __init__(self, binary = False, end_limit = float('inf'), intra_session_limit = float('inf')):
         self.users = []
         self.orderbook = OrderBook()
         self.tot_orders = 0
@@ -103,6 +103,7 @@ class BackEnd:
         self.end_limit = end_limit
         self.intra_session_limit = intra_session_limit
         self.last_traded_price = 0
+        self.binary = False
 
     def get_user(self, id):
         for user in self.users:
@@ -196,12 +197,12 @@ class BackEnd:
             return self.get_user(user_id).get_orderbook(bids, asks)
     
     def user_expected_pnl(self, user):
-        return user.pnl(self.last_traded_price)
+        return user.pnl(self.last_traded_price, binary = self.binary)
 
     def leaderboard(self, final_val):
         for user in self.users:
             user.check_limits(self.end_limit)
-        return sorted([(user.user_id, user.pnl(final_val)) for user in self.users], lambda x: x[1], reverse = True)
+        return sorted([(user.user_id, user.pnl(final_val, binary = self.binary)) for user in self.users], key=lambda x: x[1], reverse=True)
 
     def get_all_users(self):
         name = []

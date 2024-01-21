@@ -83,7 +83,7 @@ def get_results():  # noqa: E501
 
     :rtype: str
     """
-    return backend.leaderboard( 10)
+    return backend.leaderboard(10)
 
 def get_all_users():  # noqa: E501
     """Get all users

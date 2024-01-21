@@ -28,6 +28,11 @@ def create_user(name):  # noqa: E501
     backend_object.add_user(id, name)
     return id
 
+def uncompress(a):
+    b = {}
+    for i in a:
+        b[i[0]] = b.get(i[0], 0) + i[1]
+    return b
 
 def get_user(user_id):  # noqa: E501
     """Get user information
@@ -45,7 +50,9 @@ def get_user(user_id):  # noqa: E501
     return {
         "name": user.user_name,
         "id": user.user_id,
-        "score": user.position
+        "score": user.position,
+        "buys": uncompress(user.buys),
+        "sells": uncompress(user.sells),
     }
 
 
